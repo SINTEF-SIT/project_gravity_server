@@ -7,6 +7,8 @@ import org.json.*;
 
 public class Main {
     public static int i;
+    static int fallID;
+    static int fallNR;
 
     public static void main(String args[]) throws Exception
     {
@@ -31,6 +33,8 @@ public class Main {
         try {
             JSONObject obj = new JSONObject(jsonString);
             System.out.println(obj.toString());
+            fallID = Integer.parseInt(obj.get("fallID").toString());
+            fallNR = Integer.parseInt(obj.get("fallNR").toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -40,7 +44,7 @@ public class Main {
         String filePath;
         boolean done = false;
         while (!done){
-            filePath = "fall"+i+".json";
+            filePath = "ID"+fallID+"NR"+fallNR+","+i+".json";
             File f = new File(filePath);
             if (!(f.exists())){
                 byte dataToWrite[] = jsonString.getBytes();
