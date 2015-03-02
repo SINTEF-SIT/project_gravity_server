@@ -6,7 +6,6 @@ import java.net.*;
 import org.json.*;
 
 public class Main {
-    public static int i;
     static int fallID;
     static int fallNR;
 
@@ -15,7 +14,6 @@ public class Main {
         String clientSentence;
         ServerSocket welcomeSocket = new ServerSocket(8765);
         System.out.println("Server started");
-        i = 0;
 
         while(true)
         {
@@ -25,7 +23,6 @@ public class Main {
             System.out.println("Meld mottat");
             decodeJson(clientSentence);
             writeJsonToFile(clientSentence);
-            i++;
         }
     }
 
@@ -43,8 +40,9 @@ public class Main {
     private static void writeJsonToFile(String jsonString) throws Exception{
         String filePath;
         boolean done = false;
+        int count = 0;
         while (!done){
-            filePath = "ID"+fallID+"NR"+fallNR+","+i+".json";
+            filePath = "ID "+fallID+"NR"+fallNR+"."+count+".json";
             File f = new File(filePath);
             if (!(f.exists())){
                 byte dataToWrite[] = jsonString.getBytes();
@@ -52,7 +50,7 @@ public class Main {
                 out.write(dataToWrite);
                 out.close();
                 done = true;
-            }else i++;
+            }else count++;
         }
     }
 }
