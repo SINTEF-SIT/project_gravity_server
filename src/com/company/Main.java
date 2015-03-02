@@ -11,7 +11,7 @@ public class Main {
     public static void main(String args[]) throws Exception
     {
         String clientSentence;
-        ServerSocket welcomeSocket = new ServerSocket(6789);
+        ServerSocket welcomeSocket = new ServerSocket(8765);
         System.out.println("Server started");
         i = 0;
 
