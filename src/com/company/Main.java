@@ -6,8 +6,8 @@ import java.net.*;
 import org.json.*;
 
 public class Main {
-    static int fallID;
-    static int fallNR;
+    static int fallID = 1;
+    static int fallNR = 1;
 
     public static void main(String args[]) throws Exception
     {
@@ -20,19 +20,19 @@ public class Main {
             Socket connectionSocket = welcomeSocket.accept();
             BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
             clientSentence = inFromClient.readLine();
-            System.out.println("Meld mottat");
             decodeJson(clientSentence);
             writeJsonToFile(clientSentence);
         }
     }
 
-    private static void decodeJson(String jsonString){
+    private static void decodeJson(String jsonString) throws Exception{
+        JSONObject obj = new JSONObject(jsonString);
+        //System.out.println(obj.toString());
         try {
-            JSONObject obj = new JSONObject(jsonString);
-            System.out.println(obj.toString());
-            fallID = Integer.parseInt(obj.get("fallID").toString());
-            fallNR = Integer.parseInt(obj.get("fallNR").toString());
-        } catch (Exception e) {
+            fallID = Integer.parseInt(obj.get("test_id").toString());
+            //fallNR = Integer.parseInt(obj.get("fall_nr").toString());
+            System.out.println(fallID + "," + fallNR + ", " + obj.get("fall_detected_at_times"));
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
@@ -40,9 +40,10 @@ public class Main {
     private static void writeJsonToFile(String jsonString) throws Exception{
         String filePath;
         boolean done = false;
+        fallNR=0;
         int count = 0;
         while (!done){
-            filePath = "ID "+fallID+"NR"+fallNR+"."+count+".json";
+            filePath = "ID"+fallID+"NR"+fallNR+"."+count+".json";
             File f = new File(filePath);
             if (!(f.exists())){
                 byte dataToWrite[] = jsonString.getBytes();
