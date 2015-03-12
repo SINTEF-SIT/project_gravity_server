@@ -55,7 +55,10 @@ public class Main {
                 out.write(dataToWrite);
                 out.close();
                 done = true;
-                System.out.println(fallID + ", " +count+": "+ fallArr);
+
+                if (fallArr.length()>=5){
+                    System.out.println(fallID + ", " +count+": Fall Detected!");
+                }else System.out.println(fallID + ", " +count+": No fall");
             }else count++;
         }
     }
