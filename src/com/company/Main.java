@@ -6,7 +6,8 @@ import java.net.*;
 import org.json.*;
 
 public class Main {
-    static int fallID = 1;
+    static String fallID = "1";
+    static String fallArr;
     static int fallNR = 1;
 
     public static void main(String args[]) throws Exception
@@ -27,11 +28,14 @@ public class Main {
 
     private static void decodeJson(String jsonString) throws Exception{
         JSONObject obj = new JSONObject(jsonString);
+        String temp ="";
         //System.out.println(obj.toString());
         try {
-            fallID = Integer.parseInt(obj.get("test_id").toString());
+            temp = obj.get("test_id").toString().replaceAll("\\s","");
+            fallID = temp;
+            fallArr = obj.get("fall_detected_at_times").toString();
             //fallNR = Integer.parseInt(obj.get("fall_nr").toString());
-            System.out.println(fallID + "," + fallNR + ", " + obj.get("fall_detected_at_times"));
+            //System.out.println(fallID + ", " + obj.get("fall_detected_at_times"));
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -43,7 +47,7 @@ public class Main {
         fallNR=0;
         int count = 0;
         while (!done){
-            filePath = "ID"+fallID+"NR"+fallNR+"."+count+".json";
+            filePath = "ID"+fallID+"NR"+count+".json";
             File f = new File(filePath);
             if (!(f.exists())){
                 byte dataToWrite[] = jsonString.getBytes();
@@ -51,6 +55,7 @@ public class Main {
                 out.write(dataToWrite);
                 out.close();
                 done = true;
+                System.out.println(fallID + ", " +count+": "+ fallArr);
             }else count++;
         }
     }
