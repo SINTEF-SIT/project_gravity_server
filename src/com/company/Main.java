@@ -26,10 +26,11 @@ public class Main {
         }
     }
 
+    //add check to see if file is too small
+
     private static void decodeJson(String jsonString) throws Exception{
         JSONObject obj = new JSONObject(jsonString);
         String temp ="";
-        //System.out.println(obj.toString());
         try {
             temp = obj.get("test_id").toString().replaceAll("\\s","");
             fallID = temp;
