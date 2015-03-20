@@ -30,13 +30,9 @@ public class Main {
 
     private static void decodeJson(String jsonString) throws Exception{
         JSONObject obj = new JSONObject(jsonString);
-        String temp ="";
         try {
-            temp = obj.get("test_id").toString().replaceAll("\\s","");
-            fallID = temp;
+            fallID = obj.get("test_id").toString().replaceAll("\\s","");
             fallArr = obj.get("fall_detected_at_times").toString();
-            //fallNR = Integer.parseInt(obj.get("fall_nr").toString());
-            //System.out.println(fallID + ", " + obj.get("fall_detected_at_times"));
         }catch (Exception e){
             e.printStackTrace();
         }
