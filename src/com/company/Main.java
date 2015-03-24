@@ -26,7 +26,8 @@ public class Main {
             decodeJson(clientSentence);
             writeJsonToFile(clientSentence);}
             catch (Exception e){
-                System.out.println("ERROR: failed to connect to sender");}
+                System.out.println("ERROR: failed to connect to sender");
+            }
         }
     }
 
