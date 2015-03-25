@@ -8,9 +8,9 @@ import org.json.*;
 public class Main {
     static String fallID = "1";
     static String fallArr;
-    static int fallNR = 1;
     static int magLen = 0;
-    static int linAccLen =0;
+    static int accLen =0;
+    static double hertz=0;
 
     public static void main(String args[]) throws Exception
     {
@@ -39,10 +39,23 @@ public class Main {
             JSONObject sensorData = obj.getJSONObject("sensor_data");
             JSONArray linAcc = sensorData.getJSONArray("linear_acceleration");
             JSONArray magField = sensorData.getJSONArray("magnetic_field_data");
-            linAccLen = linAcc.length();
+            accLen = linAcc.length();
             magLen = magField.length();
+
+            //calculating HZ:
+            JSONObject firstArr = new JSONObject(linAcc.getJSONObject(0).toString());
+            JSONObject lastArr = new JSONObject(linAcc.getJSONObject(accLen - 1).toString());
+            int lastTime = lastArr.getInt("time");
+            int firstTime = firstArr.getInt("time");
+            double timediff = lastTime - firstTime;
+            hertz=(accLen/(timediff/1000));
+
+
+
         }catch (Exception e){
             System.out.println("ERROR: failed to decode file");
+            fallID="fail";
+            e.printStackTrace();
         }
     }
 
@@ -50,7 +63,6 @@ public class Main {
         try {
             String filePath;
             boolean done = false;
-            fallNR = 0;
             int count = 1;
             while (!done) {
                 filePath = "ID" + fallID + "NR" + count + ".json";
@@ -62,10 +74,9 @@ public class Main {
                     out.close();
                     done = true;
                     if (fallArr.length() >= 5) {
-                        System.out.println(fallID + ", " + count + ": Fall Detected!    linAccLen: " + linAccLen + ", magLen: " + magLen);
+                        System.out.println(fallID + ", " + count + ": Fall Detected!    AccLen: " + accLen + ", magLen: " + magLen+", Frequency: "+hertz);
                     } else
-                        System.out.println(fallID + ", " + count + ": No fall          linAccLen: " + linAccLen + ", magLen: " + magLen);
-                    //if (accLen<100) System.out.println("WARNING: too few acceleration data");
+                        System.out.println(fallID + ", " + count + ": No fall           AccLen: " + accLen + ", magLen: " + magLen+", Frequency: "+hertz);
                 } else count++;
             }
         }catch (Exception e){
