@@ -11,6 +11,7 @@ public class Main {
     static int magLen = 0;
     static int accLen =0;
     static double hertz=0;
+    static boolean debug = false;
 
     public static void main(String args[]) throws Exception
     {
@@ -27,6 +28,7 @@ public class Main {
             writeJsonToFile(clientSentence);}
             catch (Exception e){
                 System.out.println("ERROR: failed to connect to sender");
+                if (debug) e.printStackTrace();
             }
         }
     }
@@ -45,17 +47,12 @@ public class Main {
             //calculating HZ:
             JSONObject firstArr = new JSONObject(linAcc.getJSONObject(0).toString());
             JSONObject lastArr = new JSONObject(linAcc.getJSONObject(accLen - 1).toString());
-            int lastTime = lastArr.getInt("time");
-            int firstTime = firstArr.getInt("time");
-            double timediff = lastTime - firstTime;
+            double timediff = (lastArr.getInt("time") - firstArr.getInt("time"));
             hertz=(accLen/(timediff/1000));
-
-
-
         }catch (Exception e){
             System.out.println("ERROR: failed to decode file");
             fallID="fail";
-            e.printStackTrace();
+            if (debug) e.printStackTrace();
         }
     }
 
