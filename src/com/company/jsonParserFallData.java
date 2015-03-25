@@ -27,6 +27,7 @@ public class jsonParserFallData {
                 System.out.println(d);
             }
             //System.out.println("vertacc");
+
             for (String d : vertAcc){
                 //System.out.println(d);
             }
