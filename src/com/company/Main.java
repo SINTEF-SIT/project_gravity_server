@@ -8,9 +8,9 @@ import org.json.*;
 public class Main {
     static String fallID = "1";
     static String fallArr;
-    static int magLen = 0;
     static int accLen =0;
-    static double hertz=0;
+    static int watchLen=0;
+    static int hertz=0;
     static boolean debug = false;
 
     public static void main(String args[]) throws Exception
@@ -39,16 +39,20 @@ public class Main {
             fallID = obj.get("test_id").toString().replaceAll("\\s","");
             fallArr = obj.get("fall_detected_at_times").toString();
             JSONObject sensorData = obj.getJSONObject("sensor_data");
-            JSONArray linAcc = sensorData.getJSONArray("linear_acceleration");
-            JSONArray magField = sensorData.getJSONArray("magnetic_field_data");
+            JSONArray linAcc = sensorData.getJSONArray("phone:linear_acceleration");
+            JSONArray phonAcc = new JSONArray();
+            try{phonAcc = sensorData.getJSONArray("watch:linear_acceleration");}
+            catch (Exception e){}
             accLen = linAcc.length();
-            magLen = magField.length();
+            watchLen=phonAcc.length();
 
-            //calculating HZ:
+
+            //calculating frequency:
             JSONObject firstArr = new JSONObject(linAcc.getJSONObject(0).toString());
             JSONObject lastArr = new JSONObject(linAcc.getJSONObject(accLen - 1).toString());
             double timediff = (lastArr.getInt("time") - firstArr.getInt("time"));
-            hertz=(accLen/(timediff/1000));
+            hertz=(int)(accLen/(timediff/1000));
+
         }catch (Exception e){
             System.out.println("ERROR: failed to decode file");
             fallID="fail";
@@ -71,12 +75,14 @@ public class Main {
                     out.close();
                     done = true;
                     if (fallArr.length() >= 5) {
-                        System.out.println(fallID + ", " + count + ": Fall Detected!    AccLen: " + accLen + ", magLen: " + magLen+", Frequency: "+hertz);
+                        System.out.println(fallID + ", " + count + ": Fall Detected!    #phone: " + accLen +", #watch: "+watchLen+",    PhoneFrequency: "+hertz);
                     } else
-                        System.out.println(fallID + ", " + count + ": No fall           AccLen: " + accLen + ", magLen: " + magLen+", Frequency: "+hertz);
+                        System.out.println(fallID + ", " + count + ": No fall           #phone: " + accLen +", #watch: "+watchLen+",    PhoneFrequency: "+hertz);
                 } else count++;
             }
         }catch (Exception e){
-            System.out.println("ERROR: failed to write file to disk");}
+            System.out.println("ERROR: failed to write file to disk");
+            if (debug) e.printStackTrace();
+        }
     }
 }
