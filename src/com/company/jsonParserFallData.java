@@ -1,10 +1,12 @@
 package com.company;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class jsonParserFallData {
@@ -12,25 +14,68 @@ public class jsonParserFallData {
     //read json file - calculate total acc and vertical acc
     static ArrayList<String> totAcc = new ArrayList<String>();
     static ArrayList<String> vertAcc = new ArrayList<String>();
+    static ArrayList<String> fallIndexList = new ArrayList<String>();
+    static ArrayList<String> movingNumberThing = new ArrayList<String>();
 
     //TODO: Skal gi ut: TotAccPhone, VertAccPhone, TotAccWatch
 
     public static void main(String[] args) {
 
         try {
-            String id = "sitDownFastOnLowChair";
-            String nr = "1";
+            String id = "klokke";
+            String nr = "5";
             parseJson(readJson("ID"+id+"NR"+nr+".json"));
-            for (String d : totAcc){
+            /*for (String d : totAcc){
                 System.out.println(d);
             }
             System.out.println("------------vertacc----------");
             for (String d : vertAcc){
                 System.out.println(d);
+            }*/
+            System.out.println("------------fallIndex----------");
+            for (String d : fallIndexList){
+                System.out.println(d);
+            }
+            System.out.println("------------movingThing----------");
+            for (String d : movingNumberThing){
+                System.out.println(d);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    private static double fallIndex(JSONArray sensors, int startList, int endList) throws JSONException {
+
+        List <Double> x = new ArrayList<>();
+        List <Double> y = new ArrayList<>();
+        List <Double> z = new ArrayList<>();
+        int startValue = startList;
+
+        for (int i = 0; i < sensors.length(); i++){
+            x.add(sensors.getJSONObject(i).getDouble("x"));
+            y.add(sensors.getJSONObject(i).getDouble("y"));
+            z.add(sensors.getJSONObject(i).getDouble("z"));
+        }
+
+        List <List> sensorData = new ArrayList<List>();
+        sensorData.add(x);
+        sensorData.add(y);
+        sensorData.add(z);
+
+        double directionAcceleration = 0;
+        double totAcceleration = 0;
+
+        for (int i = 0; i < sensorData.size(); i++){
+            for (int j = startValue; j < endList; j++){
+                movingNumberThing.add(String.valueOf(Math.pow((Double)sensorData.get(i).get(j) - (Double)sensorData.get(i).get(j - 1), 2)));
+                directionAcceleration += Math.pow((Double)sensorData.get(i).get(j) - (Double)sensorData.get(i).get(j - 1), 2);
+            }
+            totAcceleration += directionAcceleration;
+            directionAcceleration = 0;
+        }
+        return Math.sqrt(totAcceleration);
     }
 
     public static void  parseJson(String jsonString) throws Exception {
@@ -41,6 +86,20 @@ public class jsonParserFallData {
         JSONArray geoRotVecData = sensorData.getJSONArray("phone:magnetic_field");
         JSONArray rotData = sensorData.getJSONArray("phone:rotation_vector");
         JSONArray watchData = sensorData.getJSONArray("watch:linear_acceleration");
+        boolean done = false;
+        int iterations = 0;
+        while (!done){
+            int startValue = iterations *25+1;
+            System.out.println(startValue + " " + watchData.length());
+            if (startValue+50 >= watchData.length()){
+                fallIndexList.add(String.valueOf(fallIndex(watchData, startValue, watchData.length())));
+                done = true;
+            }
+            else{
+                fallIndexList.add(String.valueOf(fallIndex(watchData, startValue, startValue+50)));
+            }
+            iterations++;
+        }
         float[] degs = new float[3];
         float[] rotationMatrix = new float[9];
 
