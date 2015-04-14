@@ -13,16 +13,18 @@ public class jsonParserFallData {
     static ArrayList<String> totAcc = new ArrayList<String>();
     static ArrayList<String> vertAcc = new ArrayList<String>();
 
+    //TODO: Skal gi ut: TotAccPhone, VertAccPhone, TotAccWatch
+
     public static void main(String[] args) {
 
         try {
-            String id = "14";
-            String nr = "3";
+            String id = "sitDownFastOnLowChair";
+            String nr = "1";
             parseJson(readJson("ID"+id+"NR"+nr+".json"));
             for (String d : totAcc){
                 System.out.println(d);
             }
-            System.out.println("vertacc");
+            System.out.println("------------vertacc----------");
             for (String d : vertAcc){
                 System.out.println(d);
             }
@@ -32,10 +34,10 @@ public class jsonParserFallData {
     }
 
     public static void  parseJson(String jsonString) throws Exception {
-        System.out.println("hello");
         JSONObject obj = new JSONObject(jsonString);
         JSONObject sensorData = obj.getJSONObject("sensor_data");
         JSONArray accData = sensorData.getJSONArray("phone:linear_acceleration");
+        //JSONArray accData = sensorData.getJSONArray("watch:linear_acceleration");
         JSONArray geoRotVecData = sensorData.getJSONArray("phone:magnetic_field");
         JSONArray rotData = sensorData.getJSONArray("phone:rotation_vector");
         JSONArray watchData = sensorData.getJSONArray("watch:linear_acceleration");
@@ -44,7 +46,7 @@ public class jsonParserFallData {
 
 
         if (geoRotVecData.length() > accData.length()) {
-            System.out.println("acc len: "+accData.length()+", MagField len: "+geoRotVecData.length()+", rotVec len: "+rotData.length());
+            //System.out.println("acc len: "+accData.length()+", MagField len: "+geoRotVecData.length()+", rotVec len: "+rotData.length());
             for (int i = 0; i < accData.length(); i++) {
                 if(i >=geoRotVecData.length() )break;
                 if(i >=rotData.length() )break;
