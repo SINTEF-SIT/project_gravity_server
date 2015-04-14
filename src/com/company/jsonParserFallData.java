@@ -25,13 +25,13 @@ public class jsonParserFallData {
             String id = "klokke";
             String nr = "5";
             parseJson(readJson("ID"+id+"NR"+nr+".json"));
-            /*for (String d : totAcc){
+            for (String d : totAcc){
                 System.out.println(d);
             }
             System.out.println("------------vertacc----------");
             for (String d : vertAcc){
                 System.out.println(d);
-            }*/
+            }
             System.out.println("------------fallIndex----------");
             for (String d : fallIndexList){
                 System.out.println(d);
@@ -90,7 +90,6 @@ public class jsonParserFallData {
         int iterations = 0;
         while (!done){
             int startValue = iterations *25+1;
-            System.out.println(startValue + " " + watchData.length());
             if (startValue+50 >= watchData.length()){
                 fallIndexList.add(String.valueOf(fallIndex(watchData, startValue, watchData.length())));
                 done = true;
