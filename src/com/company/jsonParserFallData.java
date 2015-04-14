@@ -7,7 +7,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 
 
-public class Main {
+public class jsonParserFallData {
 
     //read json file - calculate total acc and vertical acc
     static ArrayList<String> totAcc = new ArrayList<String>();
@@ -38,6 +38,7 @@ public class Main {
         JSONArray accData = sensorData.getJSONArray("phone:linear_acceleration");
         JSONArray geoRotVecData = sensorData.getJSONArray("phone:magnetic_field");
         JSONArray rotData = sensorData.getJSONArray("phone:rotation_vector");
+        JSONArray watchData = sensorData.getJSONArray("watch:linear_acceleration");
         float[] degs = new float[3];
         float[] rotationMatrix = new float[9];
 
