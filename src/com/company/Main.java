@@ -38,7 +38,7 @@ public class Main {
         try {
             JSONObject obj = new JSONObject(jsonString);
             fallID = obj.get("test_id").toString().replaceAll("\\s","");
-            fallArr = obj.get("fall_detected_at_times").toString();
+            //fallArr = obj.get("fall_detected_at_times").toString();
             JSONObject sensorData = obj.getJSONObject("sensor_data");
             JSONArray linAcc = sensorData.getJSONArray("phone:linear_acceleration");
             JSONArray magf = sensorData.getJSONArray("phone:magnetic_field");
@@ -50,7 +50,6 @@ public class Main {
             catch (Exception e){}
             accLen = linAcc.length();
             watchLen=phonAcc.length();
-
 
             //calculating frequency:
             JSONObject firstArr = new JSONObject(linAcc.getJSONObject(0).toString());
@@ -79,10 +78,7 @@ public class Main {
                     out.write(dataToWrite);
                     out.close();
                     done = true;
-                    if (fallArr.length() >= 5) {
-                        System.out.println(fallID + ", " + count + ": Fall Detected!    #phoneAcc: " + accLen +", #phoneMag: "+magLen+", #phoneRot: "+rotLen+", #watch: "+watchLen+",    PhoneFrequency: "+hertz);
-                    } else
-                        System.out.println(fallID + ", " + count + ": No fall           #phoneAcc: " + accLen +", #phoneMag: "+magLen+", #phoneRot: "+rotLen+", #watch: "+watchLen+",    PhoneFrequency: "+hertz);
+                    System.out.println(fallID + ", " + count + ": #phoneAcc: " + accLen + ", #phoneMag: " + magLen + ", #watch: " + watchLen + ",    PhoneFrequency: " + hertz);
                 } else count++;
             }
         }catch (Exception e){
