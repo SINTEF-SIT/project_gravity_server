@@ -16,6 +16,8 @@ public class Main {
 
     static boolean debug = true;
 
+    //This class is a server for receiving sensor recordings from the "project gravity" client.
+
     public static void main(String args[]) throws Exception
     {
         String clientMessage;
@@ -24,11 +26,12 @@ public class Main {
         while(true)
         {
             try{
-                Socket connectionSocket = welcomeSocket.accept();
+                Socket connectionSocket = welcomeSocket.accept();   //accepting new incoming recordings
                 BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
                 clientMessage = inFromClient.readLine();
-                decodeJson(clientMessage);
-                writeJsonToFile(clientMessage);}
+                decodeJson(clientMessage);          //Extracts meta info from the recording.
+                writeJsonToFile(clientMessage);     //Writes the recording to a file in the main directory.
+            }
             catch (Exception e){
                 System.out.println("ERROR: failed to connect to sender");
                 if (debug) e.printStackTrace();
@@ -36,6 +39,13 @@ public class Main {
         }
     }
 
+    /*
+    decodeJson extracts meta information from the received recording.
+    It retrieves:
+        fallID - which is later used as the filename. If no fallID is found, the id will be set "unnamed"
+        Lengths of arrays - used to debug incoming recording
+        Length of the recording
+    */
     private static void decodeJson(String jsonString){
         try {
             JSONObject ob = new JSONObject(jsonString);
@@ -54,45 +64,37 @@ public class Main {
             timediff = (lastArr.getInt("time") - firstArr.getInt("time"));
             timediff = timediff / 1000;
 
-
-            /*
-            fallArr = obj.get("fall_detected_at_times").toString();
-            JSONObject sensorData = obj.getJSONObject("sensor_data");
-            JSONArray linAcc = sensorData.getJSONArray("phone:linear_acceleration");
-            JSONArray magf = sensorData.getJSONArray("phone:magnetic_field");
-            JSONArray rota = sensorData.getJSONArray("phone:rotation_vector");
-            JSONArray phonAcc = sensorData.getJSONArray("watch:linear_acceleration");
-            rotLen = rota.length();
-            magLen=magf.length();
-            accLen = linAcc.length();
-            watchLen=phonAcc.length();
-            */
-
         }catch (Exception e){
             System.out.println("ERROR: failed to decode file");
-            fallID="fail_"+fallID+"_fail";
+            try{fallID="fail_"+fallID+"_fail";} catch (Exception k){fallID="unnamed";}
             if (debug) e.printStackTrace();
         }
     }
 
-    private static boolean containsFall(JSONArray fall) throws Exception{
-        double id = 0;
-        JSONObject temp;
-        boolean wasfall = false;
-        for (int i =0; i<fall.length(); i++){
-            temp = fall.getJSONObject(i);
-            if (temp.getDouble("id") == id){
-                if (!temp.getBoolean("isFall")){
-                    wasfall = false;
+    /* This method checks if the algorithms in the client indicated a fall
+    the "id" field is a unique id of a specific set of samples throughout the algorithms.
+    The recording contains information about each time an algorithm evaluates a set of data.
+    to see if there is an indicated fall. You must follow the ID, and see whether each algorithm returned "true" or "false"
+    if all none returned "true" - it was considered a fall. When an algorithm returns "false", no more algorithms are run for that id.
+    */
+    private static boolean containsFall(JSONArray fall) {
+        try {
+            double id = 0;
+            JSONObject temp;
+            boolean wasfall = false;
+            for (int i = 0; i < fall.length(); i++) {
+                temp = fall.getJSONObject(i);
+                if (temp.getDouble("id") == id)
+                    if (!temp.getBoolean("isFall")) wasfall = false;
+                    else wasfall = true;
+                else {
+                    if (wasfall) return true;   //this indicates that a new ID is found - and that the last algorithm check was true - therefor it is a fall
+                    id = temp.getDouble("id");
                 }
-                else wasfall = true;
             }
-            else {
-                if (wasfall){
-                    return true;
-                }
-                id = temp.getDouble("id");
-            }
+        }catch (Exception e) {
+            if(debug)e.printStackTrace();
+            else System.out.println("ERROR: failed to check for falls");
         }
         return false;
     }
@@ -100,10 +102,10 @@ public class Main {
     private static void writeJsonToFile(String jsonString){
         try {
             JSONObject temp = new JSONObject(jsonString);
-
             String filePath;
-            boolean done = false;
             int count = 1;
+            boolean done = false;
+            // This while loop loops through possible filenames to find the lowest available.
             while (!done) {
                 filePath = "ID" + fallID + "NR" + count + ".json";
                 File f = new File(filePath);
@@ -113,15 +115,12 @@ public class Main {
                     out.write(dataToWrite);
                     out.close();
                     done = true;
-                    System.out.println("Data received:   "+fallID + " - " + count+"    "+containsFall(temp.getJSONArray("fall_detection")) + "     phoneData: "+phoneTotLen+", watchData: "+wat+"    Time: "+timediff+" sek");
+                    System.out.println("Data received:   "+fallID + " - " + count+"    "+containsFall(temp.getJSONArray("fall_detection")) + "     phoneData: "+phoneTotLen+", watchData: "+watchFallIndexLen+"    Time: "+timediff+" sek");
                 } else count++;
             }
         }catch (Exception e){
             System.out.println("ERROR: failed to write file to disk");
             if (debug) e.printStackTrace();
         }
-       /* accLen=0;
-        magLen=0;
-        rotLen=0;*/
     }
 }

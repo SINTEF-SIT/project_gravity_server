@@ -12,27 +12,25 @@ import java.util.List;
 public class jsonParserFallData {
 
     //read json file - calculate total acc and vertical acc
-    static ArrayList<String> totAcc = new ArrayList<String>();
-    static ArrayList<String> vertAcc = new ArrayList<String>();
-    static ArrayList<String> fallIndexList = new ArrayList<String>();
-    static ArrayList<String> movingNumberThing = new ArrayList<String>();
-    static ArrayList<String> fallIndexPostList = new ArrayList<String>();
-
-    //TODO: Skal gi ut: TotAccPhone, VertAccPhone, TotAccWatch
+    static ArrayList<String> totAcc = new ArrayList<>();
+    static ArrayList<String> vertAcc = new ArrayList<>();
+    static ArrayList<String> fallIndexList = new ArrayList<>();
+    static ArrayList<String> movingNumberThing = new ArrayList<>();
+    static ArrayList<String> fallIndexPostList = new ArrayList<>();
 
     public static void main(String[] args) {
 
         try {
-            String id = "q";
+            String id = "1";
             String nr = "1";
             parseJson(readJson("ID"+id+"NR"+nr+".json"));
-           /* for (String d : totAcc){
+            for (String d : totAcc){
                 System.out.println(d);
             }
             System.out.println("------------Vertical Acceleration----------");
             for (String d : vertAcc){
                 System.out.println(d);
-            }*/
+            }
             System.out.println("------------fallIndex----------");
             for (String d : fallIndexList){
                 System.out.println(d);
@@ -40,48 +38,15 @@ public class jsonParserFallData {
             System.out.println("------------fallIndexPOST----------");
             for (String d : fallIndexPostList){
                 System.out.println(d);
-            }/*
-            System.out.println("------------movingThing----------");
+            }
+            System.out.println("------------watchMovement----------");
             for (String d : movingNumberThing){
                 System.out.println(d);
-            }*/
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-/*
-    private static double fallIndex(JSONArray sensors, int startList, int endList) throws JSONException {
-
-        List <Double> x = new ArrayList<Double>();
-        List <Double> y = new ArrayList<Double>();
-        List <Double> z = new ArrayList<Double>();
-        int startValue = startList;
-
-        for (int i = 0; i < sensors.length(); i++){
-            x.add(sensors.getJSONObject(i).getDouble("x"));
-            y.add(sensors.getJSONObject(i).getDouble("y"));
-            z.add(sensors.getJSONObject(i).getDouble("z"));
-        }
-
-        List <List> sensorData = new ArrayList<List>();
-        sensorData.add(x);
-        sensorData.add(y);
-        sensorData.add(z);
-
-        double directionAcceleration = 0;
-        double totAcceleration = 0;
-
-        for (int i = 0; i < sensorData.size(); i++){
-            for (int j = startValue; j < endList; j++){
-                movingNumberThing.add(String.valueOf(Math.pow((Double)sensorData.get(i).get(j) - (Double)sensorData.get(i).get(j - 1), 2)).replace(".", ","));
-                directionAcceleration += Math.pow((Double)sensorData.get(i).get(j) - (Double)sensorData.get(i).get(j - 1), 2);
-            }
-            totAcceleration += directionAcceleration;
-            directionAcceleration = 0;
-        }
-        return Math.sqrt(totAcceleration);
-    }*/
 
     public static void  parseJson(String jsonString) throws Exception {
         JSONObject obj = new JSONObject(jsonString);
