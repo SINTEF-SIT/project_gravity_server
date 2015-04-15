@@ -48,9 +48,9 @@ public class jsonParserFallData {
 
     private static double fallIndex(JSONArray sensors, int startList, int endList) throws JSONException {
 
-        List <Double> x = new ArrayList<>();
-        List <Double> y = new ArrayList<>();
-        List <Double> z = new ArrayList<>();
+        List <Double> x = new ArrayList<Double>();
+        List <Double> y = new ArrayList<Double>();
+        List <Double> z = new ArrayList<Double>();
         int startValue = startList;
 
         for (int i = 0; i < sensors.length(); i++){
@@ -69,7 +69,7 @@ public class jsonParserFallData {
 
         for (int i = 0; i < sensorData.size(); i++){
             for (int j = startValue; j < endList; j++){
-                movingNumberThing.add(String.valueOf(Math.pow((Double)sensorData.get(i).get(j) - (Double)sensorData.get(i).get(j - 1), 2)));
+                movingNumberThing.add(String.valueOf(Math.pow((Double)sensorData.get(i).get(j) - (Double)sensorData.get(i).get(j - 1), 2)).replace(".", ","));
                 directionAcceleration += Math.pow((Double)sensorData.get(i).get(j) - (Double)sensorData.get(i).get(j - 1), 2);
             }
             totAcceleration += directionAcceleration;
@@ -91,11 +91,11 @@ public class jsonParserFallData {
         while (!done){
             int startValue = iterations *25+1;
             if (startValue+50 >= watchData.length()){
-                fallIndexList.add(String.valueOf(fallIndex(watchData, startValue, watchData.length())));
+                fallIndexList.add(String.valueOf(fallIndex(watchData, startValue, watchData.length())).replace(".", ","));
                 done = true;
             }
             else{
-                fallIndexList.add(String.valueOf(fallIndex(watchData, startValue, startValue+50)));
+                fallIndexList.add(String.valueOf(fallIndex(watchData, startValue, startValue + 50)).replace(".", ","));
             }
             iterations++;
         }

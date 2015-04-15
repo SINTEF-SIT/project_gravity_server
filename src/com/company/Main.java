@@ -38,6 +38,8 @@ public class Main {
         try {
             JSONObject obj = new JSONObject(jsonString);
             fallID = obj.get("test_id").toString().replaceAll("\\s","");
+
+            /*
             //fallArr = obj.get("fall_detected_at_times").toString();
             JSONObject sensorData = obj.getJSONObject("sensor_data");
             JSONArray linAcc = sensorData.getJSONArray("phone:linear_acceleration");
@@ -55,11 +57,11 @@ public class Main {
             JSONObject firstArr = new JSONObject(linAcc.getJSONObject(0).toString());
             JSONObject lastArr = new JSONObject(linAcc.getJSONObject(accLen - 1).toString());
             double timediff = (lastArr.getInt("time") - firstArr.getInt("time"));
-            hertz=(int)(accLen/(timediff/1000));
+            hertz=(int)(accLen/(timediff/1000));*/
 
         }catch (Exception e){
             System.out.println("ERROR: failed to decode file");
-            fallID="fail";
+            fallID="fail_"+fallID+"_fail";
             if (debug) e.printStackTrace();
         }
     }
