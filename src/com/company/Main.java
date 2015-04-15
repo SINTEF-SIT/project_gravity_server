@@ -7,12 +7,13 @@ import org.json.*;
 public class Main {
     static String fallID = "1";
     static String fallArr;
-    static int accLen =0;
-    static int magLen = 0;
-    static int rotLen = 0;
-    static int watchLen=0;
-    static int hertz=0;
+    static int phoneVertLen =0;
+    static int phoneTotLen = 0;
+    static int watchFallIndexLen = 0;
+    static int phoneHz=0;
+    static int watchHz=0;
     static boolean debug = true;
+    static double timediff;
 
     public static void main(String args[]) throws Exception
     {
@@ -36,9 +37,22 @@ public class Main {
 
     private static void decodeJson(String jsonString){
         try {
-            JSONObject obj = new JSONObject(jsonString);
-            System.out.println(containsFall(obj.getJSONArray("fall_detection")));
-            fallID = obj.get("test_id").toString().replaceAll("\\s","");
+            JSONObject ob = new JSONObject(jsonString);
+            JSONObject obj = new JSONObject(jsonString).getJSONObject("calculations");
+            fallID = ob.get("test_id").toString().replaceAll("\\s","");
+            JSONArray phoneTot = obj.getJSONArray("phone_total_acceleration");
+            JSONArray phoneVert = obj.getJSONArray("phone_vertical_acceleration");
+            JSONArray watchIndex = obj.getJSONArray("watch_fall_index");
+
+            phoneTotLen = phoneTot.length();
+            phoneVertLen = phoneVert.length();
+            watchFallIndexLen = watchIndex.length();
+
+            JSONObject firstArr = new JSONObject(phoneTot.getJSONObject(0).toString());
+            JSONObject lastArr = new JSONObject(phoneTot.getJSONObject(phoneTotLen - 1).toString());
+            timediff = (lastArr.getInt("time") - firstArr.getInt("time"));
+            timediff = timediff / 1000;
+
 
             /*
             //fallArr = obj.get("fall_detected_at_times").toString();
@@ -70,13 +84,14 @@ public class Main {
     private static boolean containsFall(JSONArray fall) throws Exception{
         double id = 0;
         JSONObject temp;
-        boolean wasfall = true;
+        boolean wasfall = false;
         for (int i =0; i<fall.length(); i++){
             temp = fall.getJSONObject(i);
             if (temp.getDouble("id") == id){
                 if (!temp.getBoolean("isFall")){
                     wasfall = false;
                 }
+                else wasfall = true;
             }
             else {
                 if (wasfall){
@@ -85,11 +100,13 @@ public class Main {
                 id = temp.getDouble("id");
             }
         }
-
+        return false;
     }
 
     private static void writeJsonToFile(String jsonString){
         try {
+            JSONObject temp = new JSONObject(jsonString);
+
             String filePath;
             boolean done = false;
             int count = 1;
@@ -102,7 +119,7 @@ public class Main {
                     out.write(dataToWrite);
                     out.close();
                     done = true;
-                    System.out.println("Data received:   "+fallID + " - " + count);
+                    System.out.println("Data received:   "+fallID + " - " + count+"    "+containsFall(temp.getJSONArray("fall_detection")) + "     phoneData: "+phoneTotLen+", watchData: "+watchFallIndexLen+"    Time: "+timediff+" sek");
                 } else count++;
             }
         }catch (Exception e){

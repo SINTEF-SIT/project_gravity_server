@@ -80,12 +80,11 @@ public class jsonParserFallData {
 
     public static void  parseJson(String jsonString) throws Exception {
         JSONObject obj = new JSONObject(jsonString);
-        JSONObject sensorData = obj.getJSONObject("sensor_data");
-        JSONArray accData = sensorData.getJSONArray("phone:linear_acceleration");
-        //JSONArray accData = sensorData.getJSONArray("watch:linear_acceleration");
-        JSONArray geoRotVecData = sensorData.getJSONArray("phone:magnetic_field");
-        JSONArray rotData = sensorData.getJSONArray("phone:rotation_vector");
-        JSONArray watchData = sensorData.getJSONArray("watch:linear_acceleration");
+        JSONObject calculations = obj.getJSONObject("calculations");
+        JSONArray phoneTotal = calculations.getJSONArray("phone_total_acceleration");
+        JSONArray phoneVertical = calculations.getJSONArray("phone_vertical_acceleration");
+        JSONArray rotData = calculations.getJSONArray("phone:rotation_vector");
+        JSONArray watchData = calculations.getJSONArray("watch:linear_acceleration");
         boolean done = false;
         int iterations = 0;
         while (!done){
