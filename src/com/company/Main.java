@@ -73,7 +73,7 @@ public class Main {
     the "id" field is a unique id of a specific set of samples throughout the algorithms.
     The recording contains information about each time an algorithm evaluates a set of data.
     to see if there is an indicated fall. You must follow the ID, and see whether each algorithm returned "true" or "false"
-    if all none returned "true" - it was considered a fall. When an algorithm returns "false", no more algorithms are run for that id.
+    if all none returned "false" - it was considered a fall. When an algorithm returns "false", no more algorithms are run for that id.
     */
     private static boolean containsFall(JSONArray fall) {
         try {
