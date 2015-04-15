@@ -66,6 +66,18 @@ public class Main {
         }
     }
 
+    private static boolean containsFall(JSONArray fall) throws Exception{
+        double id = 0;
+        JSONObject temp = new JSONObject();
+        for (int i =0; i<fall.length(); i++){
+            temp =fall.getJSONObject(i);
+            if (temp.getDouble("time") == id){
+                if (temp.getBoolean("isFall"))
+            }
+        }
+
+    }
+
     private static void writeJsonToFile(String jsonString){
         try {
             String filePath;
@@ -80,15 +92,15 @@ public class Main {
                     out.write(dataToWrite);
                     out.close();
                     done = true;
-                    System.out.println(fallID + ", " + count + ": #phoneAcc: " + accLen + ", #phoneMag: " + magLen + ", #watch: " + watchLen + ",    PhoneFrequency: " + hertz);
+                    System.out.println("Data received:   "+fallID + " - " + count);
                 } else count++;
             }
         }catch (Exception e){
             System.out.println("ERROR: failed to write file to disk");
             if (debug) e.printStackTrace();
         }
-        accLen=0;
+       /* accLen=0;
         magLen=0;
-        rotLen=0;
+        rotLen=0;*/
     }
 }
