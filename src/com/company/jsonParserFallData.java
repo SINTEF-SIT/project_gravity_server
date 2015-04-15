@@ -22,13 +22,13 @@ public class jsonParserFallData {
     public static void main(String[] args) {
 
         try {
-            String id = "klokke";
-            String nr = "5";
+            String id = "gg";
+            String nr = "1";
             parseJson(readJson("ID"+id+"NR"+nr+".json"));
             for (String d : totAcc){
                 System.out.println(d);
             }
-            System.out.println("------------vertacc----------");
+            System.out.println("------------Vertical Acceleration----------");
             for (String d : vertAcc){
                 System.out.println(d);
             }
@@ -83,8 +83,24 @@ public class jsonParserFallData {
         JSONObject calculations = obj.getJSONObject("calculations");
         JSONArray phoneTotal = calculations.getJSONArray("phone_total_acceleration");
         JSONArray phoneVertical = calculations.getJSONArray("phone_vertical_acceleration");
-        JSONArray rotData = calculations.getJSONArray("phone:rotation_vector");
-        JSONArray watchData = calculations.getJSONArray("watch:linear_acceleration");
+        JSONArray watchFallIndex = calculations.getJSONArray("watch_fall_index");
+        JSONArray watchDirection = calculations.getJSONArray("watch_direction_acceleration");
+
+        for (int i = 0; i < phoneTotal.length(); i++) {
+            Double totValue = phoneTotal.getJSONObject(i).getDouble("value");
+            totAcc.add(String.valueOf(totValue).replace(".", ","));
+            Double vertValue = phoneVertical.getJSONObject(i).getDouble("value");
+            vertAcc.add(String.valueOf(vertValue).replace(".", ","));
+        }
+        for (int i = 0; i<watchFallIndex.length(); i++){
+            fallIndexList.add(String.valueOf(watchFallIndex.getJSONObject(i).getDouble("value")).replace(".", ","));
+        }
+        for (int i = 0; i<watchFallIndex.length(); i++){
+            movingNumberThing.add(String.valueOf(watchDirection.getJSONObject(i).getDouble("value")).replace(".", ","));
+        }
+
+
+        /*
         boolean done = false;
         int iterations = 0;
         while (!done){
@@ -100,8 +116,6 @@ public class jsonParserFallData {
         }
         float[] degs = new float[3];
         float[] rotationMatrix = new float[9];
-
-
         if (geoRotVecData.length() > accData.length()) {
             //System.out.println("acc len: "+accData.length()+", MagField len: "+geoRotVecData.length()+", rotVec len: "+rotData.length());
             for (int i = 0; i < accData.length(); i++) {
@@ -185,8 +199,7 @@ public class jsonParserFallData {
                 String vertS = Double.toString(vertAccD).replace(".", ",");
                 totAcc.add(totS);
                 vertAcc.add(vertS);
-            }
-        }
+            }*/
     }
 
     public static String readJson(String filename) throws Exception{
