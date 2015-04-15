@@ -16,36 +16,41 @@ public class jsonParserFallData {
     static ArrayList<String> vertAcc = new ArrayList<String>();
     static ArrayList<String> fallIndexList = new ArrayList<String>();
     static ArrayList<String> movingNumberThing = new ArrayList<String>();
+    static ArrayList<String> fallIndexPostList = new ArrayList<String>();
 
     //TODO: Skal gi ut: TotAccPhone, VertAccPhone, TotAccWatch
 
     public static void main(String[] args) {
 
         try {
-            String id = "gg";
+            String id = "q";
             String nr = "1";
             parseJson(readJson("ID"+id+"NR"+nr+".json"));
-            for (String d : totAcc){
+           /* for (String d : totAcc){
                 System.out.println(d);
             }
             System.out.println("------------Vertical Acceleration----------");
             for (String d : vertAcc){
                 System.out.println(d);
-            }
+            }*/
             System.out.println("------------fallIndex----------");
             for (String d : fallIndexList){
                 System.out.println(d);
             }
+            System.out.println("------------fallIndexPOST----------");
+            for (String d : fallIndexPostList){
+                System.out.println(d);
+            }/*
             System.out.println("------------movingThing----------");
             for (String d : movingNumberThing){
                 System.out.println(d);
-            }
+            }*/
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-
+/*
     private static double fallIndex(JSONArray sensors, int startList, int endList) throws JSONException {
 
         List <Double> x = new ArrayList<Double>();
@@ -76,7 +81,7 @@ public class jsonParserFallData {
             directionAcceleration = 0;
         }
         return Math.sqrt(totAcceleration);
-    }
+    }*/
 
     public static void  parseJson(String jsonString) throws Exception {
         JSONObject obj = new JSONObject(jsonString);
@@ -85,6 +90,7 @@ public class jsonParserFallData {
         JSONArray phoneVertical = calculations.getJSONArray("phone_vertical_acceleration");
         JSONArray watchFallIndex = calculations.getJSONArray("watch_fall_index");
         JSONArray watchDirection = calculations.getJSONArray("watch_direction_acceleration");
+        JSONArray watchFallPost = calculations.getJSONArray(("watch_after_fall"));
 
         for (int i = 0; i < phoneTotal.length(); i++) {
             Double totValue = phoneTotal.getJSONObject(i).getDouble("value");
@@ -95,7 +101,10 @@ public class jsonParserFallData {
         for (int i = 0; i<watchFallIndex.length(); i++){
             fallIndexList.add(String.valueOf(watchFallIndex.getJSONObject(i).getDouble("value")).replace(".", ","));
         }
-        for (int i = 0; i<watchFallIndex.length(); i++){
+        for (int i = 0; i<watchFallPost.length(); i++){
+            fallIndexPostList.add(String.valueOf(watchFallPost.getJSONObject(i).getDouble("value")).replace(".", ","));
+        }
+        for (int i = 0; i<watchDirection.length(); i++){
             movingNumberThing.add(String.valueOf(watchDirection.getJSONObject(i).getDouble("value")).replace(".", ","));
         }
 
@@ -220,7 +229,7 @@ public class jsonParserFallData {
         }
         return everything;
 
-    }
+    }/*
 
     public static boolean getRotationMatrix(float[] R, float[] I, float[] gravity, float[] geomagnetic) {
         float Ax = gravity[0];
@@ -284,7 +293,7 @@ public class jsonParserFallData {
     }
 
     public static float[] getOrientation(float[] R, float values[]) {
-       /*
+
         * 4x4 (length=16) case:
         *   /  R[ 0]   R[ 1]   R[ 2]   0  \
         *   |  R[ 4]   R[ 5]   R[ 6]   0  |
@@ -296,7 +305,7 @@ public class jsonParserFallData {
         *   |  R[ 3]   R[ 4]   R[ 5]  |
         *   \  R[ 6]   R[ 7]   R[ 8]  /
         *
-        */
+
         if (R.length == 9) {
             values[0] = (float)Math.atan2(R[1], R[4]);
             values[1] = (float)Math.asin(-R[7]);
@@ -308,4 +317,5 @@ public class jsonParserFallData {
         }
         return values;
     }
+    */
 }

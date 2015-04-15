@@ -12,22 +12,23 @@ public class Main {
     static int watchFallIndexLen = 0;
     static int phoneHz=0;
     static int watchHz=0;
-    static boolean debug = true;
     static double timediff;
+
+    static boolean debug = true;
 
     public static void main(String args[]) throws Exception
     {
-        String clientSentence;
+        String clientMessage;
         ServerSocket welcomeSocket = new ServerSocket(8765);
         System.out.println("Server started");
         while(true)
         {
             try{
-            Socket connectionSocket = welcomeSocket.accept();
-            BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-            clientSentence = inFromClient.readLine();
-            decodeJson(clientSentence);
-            writeJsonToFile(clientSentence);}
+                Socket connectionSocket = welcomeSocket.accept();
+                BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+                clientMessage = inFromClient.readLine();
+                decodeJson(clientMessage);
+                writeJsonToFile(clientMessage);}
             catch (Exception e){
                 System.out.println("ERROR: failed to connect to sender");
                 if (debug) e.printStackTrace();
@@ -38,8 +39,8 @@ public class Main {
     private static void decodeJson(String jsonString){
         try {
             JSONObject ob = new JSONObject(jsonString);
-            JSONObject obj = new JSONObject(jsonString).getJSONObject("calculations");
             fallID = ob.get("test_id").toString().replaceAll("\\s","");
+            JSONObject obj = ob.getJSONObject("calculations");
             JSONArray phoneTot = obj.getJSONArray("phone_total_acceleration");
             JSONArray phoneVert = obj.getJSONArray("phone_vertical_acceleration");
             JSONArray watchIndex = obj.getJSONArray("watch_fall_index");
@@ -55,24 +56,17 @@ public class Main {
 
 
             /*
-            //fallArr = obj.get("fall_detected_at_times").toString();
+            fallArr = obj.get("fall_detected_at_times").toString();
             JSONObject sensorData = obj.getJSONObject("sensor_data");
             JSONArray linAcc = sensorData.getJSONArray("phone:linear_acceleration");
             JSONArray magf = sensorData.getJSONArray("phone:magnetic_field");
-            magLen=magf.length();
             JSONArray rota = sensorData.getJSONArray("phone:rotation_vector");
+            JSONArray phonAcc = sensorData.getJSONArray("watch:linear_acceleration");
             rotLen = rota.length();
-            JSONArray phonAcc = new JSONArray();
-            try{phonAcc = sensorData.getJSONArray("watch:linear_acceleration");}
-            catch (Exception e){}
+            magLen=magf.length();
             accLen = linAcc.length();
             watchLen=phonAcc.length();
-
-            //calculating frequency:
-            JSONObject firstArr = new JSONObject(linAcc.getJSONObject(0).toString());
-            JSONObject lastArr = new JSONObject(linAcc.getJSONObject(accLen - 1).toString());
-            double timediff = (lastArr.getInt("time") - firstArr.getInt("time"));
-            hertz=(int)(accLen/(timediff/1000));*/
+            */
 
         }catch (Exception e){
             System.out.println("ERROR: failed to decode file");
@@ -119,7 +113,7 @@ public class Main {
                     out.write(dataToWrite);
                     out.close();
                     done = true;
-                    System.out.println("Data received:   "+fallID + " - " + count+"    "+containsFall(temp.getJSONArray("fall_detection")) + "     phoneData: "+phoneTotLen+", watchData: "+watchFallIndexLen+"    Time: "+timediff+" sek");
+                    System.out.println("Data received:   "+fallID + " - " + count+"    "+containsFall(temp.getJSONArray("fall_detection")) + "     phoneData: "+phoneTotLen+", watchData: "+wat+"    Time: "+timediff+" sek");
                 } else count++;
             }
         }catch (Exception e){
