@@ -5,18 +5,15 @@ import java.net.*;
 import org.json.*;
 
 public class Main {
-    static String fallID = "1";
-    static String fallArr;
+    static String fallID;
     static int phoneVertLen =0;
     static int phoneTotLen = 0;
     static int watchFallIndexLen = 0;
-    static int phoneHz=0;
-    static int watchHz=0;
     static double timediff;
 
     static boolean debug = true;
 
-    //This class is a server for receiving sensor recordings from the "project gravity" client.
+    //This is a server for receiving sensor recordings from the "project gravity" client.
 
     public static void main(String args[]) throws Exception
     {
@@ -29,8 +26,7 @@ public class Main {
                 Socket connectionSocket = welcomeSocket.accept();   //accepting new incoming recordings
                 BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
                 clientMessage = inFromClient.readLine();
-                decodeJson(clientMessage);          //Extracts meta info from the recording.
-                writeJsonToFile(clientMessage);     //Writes the recording to a file in the main directory.
+                decodeJson(clientMessage);  //Extracts meta info from the recording. - also runs the "writeJsonToFile()" method
             }
             catch (Exception e){
                 System.out.println("ERROR: failed to connect to sender");
@@ -63,6 +59,8 @@ public class Main {
             JSONObject lastArr = new JSONObject(phoneTot.getJSONObject(phoneTotLen - 1).toString());
             timediff = (lastArr.getInt("time") - firstArr.getInt("time"));
             timediff = timediff / 1000;
+
+            writeJsonToFile(jsonString,fallID);
 
         }catch (Exception e){
             System.out.println("ERROR: failed to decode file");
@@ -99,7 +97,7 @@ public class Main {
         return false;
     }
 
-    private static void writeJsonToFile(String jsonString){
+    private static void writeJsonToFile(String jsonString, String fallID){
         try {
             JSONObject temp = new JSONObject(jsonString);
             String filePath;
