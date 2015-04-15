@@ -37,6 +37,7 @@ public class Main {
     private static void decodeJson(String jsonString){
         try {
             JSONObject obj = new JSONObject(jsonString);
+            System.out.println(containsFall(obj.getJSONArray("fall_detection")));
             fallID = obj.get("test_id").toString().replaceAll("\\s","");
 
             /*
@@ -68,11 +69,20 @@ public class Main {
 
     private static boolean containsFall(JSONArray fall) throws Exception{
         double id = 0;
-        JSONObject temp = new JSONObject();
+        JSONObject temp;
+        boolean wasfall = true;
         for (int i =0; i<fall.length(); i++){
-            temp =fall.getJSONObject(i);
-            if (temp.getDouble("time") == id){
-                if (temp.getBoolean("isFall"))
+            temp = fall.getJSONObject(i);
+            if (temp.getDouble("id") == id){
+                if (!temp.getBoolean("isFall")){
+                    wasfall = false;
+                }
+            }
+            else {
+                if (wasfall){
+                    return true;
+                }
+                id = temp.getDouble("id");
             }
         }
 
